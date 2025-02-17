@@ -1,116 +1,92 @@
-class Candy:
+def character_info_decorator(cls):
     """
-    Суперкласс, представляющий конфеты.
+    Декоратор для вывода информации о создании персонажа.
+    """
+    def wrapper(*args, **kwargs):
+        instance = cls(*args, **kwargs)
+        print(f"Создан новый игровой персонаж типа {cls.__name__} с атрибутами: {instance.__dict__}")
+        return instance
+    return wrapper
+
+
+@character_info_decorator
+class Soldier:
+    """
+    Класс, представляющий солдата.
 
     Атрибуты:
-        name (str): Название конфет.
-        price (float): Цена конфет.
-        weight (float): Вес конфет.
+        name (str): Имя солдата.
+        __rank (str): Воинское звание (приватный).
+        __service_number (str): Порядковый номер (приватный).
+
+    Методы:
+        get_rank(): Возвращает воинское звание.
+        verify_service_number(): Подтверждает порядковый номер.
+        promote(): Повышает в звании.
+        demote(): Понижает в звании.
     """
 
-    def __init__(self, name, price, weight):
+    RANKS = ["рядовой", "ефрейтор", "младший сержант", "сержант", "старший сержант"]
+
+    def __init__(self, name, rank, service_number):
         """
-        Инициализирует объект Candy.
+        Инициализирует объект Soldier.
 
         Args:
-            name (str): Название конфет.
-            price (float): Цена конфет.
-            weight (float): Вес конфет.
+            name (str): Имя солдата.
+            rank (str): Воинское звание.
+            service_number (str): Порядковый номер.
         """
         self.name = name
-        self.price = price
-        self.weight = weight
+        self.__rank = rank
+        self.__service_number = service_number
 
-
-class Chocolate(Candy):
-    """
-    Подкласс, представляющий шоколадные конфеты.
-
-    Атрибуты:
-        cocoa_percentage (float): Процент содержания какао.
-        chocolate_type (str): Тип шоколада.
-    """
-
-    def __init__(self, name, price, weight, cocoa_percentage, chocolate_type):
+    def get_rank(self):
         """
-        Инициализирует объект Chocolate.
+        Возвращает воинское звание.
 
-        Args:
-            cocoa_percentage (float): Процент содержания какао.
-            chocolate_type (str): Тип шоколада.
+        Returns:
+            str: Воинское звание.
         """
-        super().__init__(name, price, weight)
-        self.cocoa_percentage = cocoa_percentage
-        self.chocolate_type = chocolate_type
+        print(f"Персонаж {self.name} имеет звание {self.__rank}")
+        return self.__rank
 
-
-class Gummy(Candy):
-    """
-    Подкласс, представляющий жевательный мармелад.
-
-    Атрибуты:
-        flavor (str): Вкус мармелада.
-        shape (str): Форма мармелада.
-    """
-
-    def __init__(self, name, price, weight, flavor, shape):
+    def verify_service_number(self):
         """
-        Инициализирует объект Gummy.
+        Подтверждает порядковый номер.
 
-        Args:
-            flavor (str): Вкус мармелада.
-            shape (str): Форма мармелада.
+        Returns:
+            str: Порядковый номер.
         """
-        super().__init__(name, price, weight)
-        self.flavor = flavor
-        self.shape = shape
+        print(f"Порядковый номер {self.name}: {self.__service_number}")
+        return self.__service_number
 
-
-class HardCandy(Candy):
-    """
-    Подкласс, представляющий леденцы.
-
-    Атрибуты:
-        flavor (str): Вкус леденца.
-        filled (bool): Наличие начинки.
-    """
-
-    def __init__(self, name, price, weight, flavor, filled):
+    def promote(self):
         """
-        Инициализирует объект HardCandy.
-
-        Args:
-            flavor (str): Вкус леденца.
-            filled (bool): Наличие начинки.
+        Повышает солдата в звании.
         """
-        super().__init__(name, price, weight)
-        self.flavor = flavor
-        self.filled = filled
+        current_index = self.RANKS.index(self.__rank)
+        if current_index < len(self.RANKS) - 1:
+            self.__rank = self.RANKS[current_index + 1]
+            print(f"{self.name} повышен в звании, он теперь {self.__rank}")
+        else:
+            print(f"{self.name} уже имеет высшее звание: {self.__rank}")
+
+    def demote(self):
+        """
+        Понижает солдата в звании.
+        """
+        current_index = self.RANKS.index(self.__rank)
+        if current_index > 0:
+            self.__rank = self.RANKS[current_index - 1]
+            print(f"{self.name} понижен в звании, он теперь {self.__rank}")
+        else:
+            print(f"{self.name} уже имеет низшее звание: {self.__rank}")
 
 
 # Пример использования
 if __name__ == "__main__":
-    chocolate = Chocolate(name="Швейцарские луга", price=325.50, weight=220, cocoa_percentage=40, chocolate_type="молочный")
-    gummy = Gummy(name="Жуй-жуй", price=76.50, weight=50, flavor="вишня", shape="медведь")
-    hard_candy = HardCandy(name="Crazy Фрукт", price=35.50, weight=25, flavor="манго", filled=True)
-
-    print("Шоколадные конфеты:")
-    print(f"Название конфет: {chocolate.name}")
-    print(f"Стоимость: {chocolate.price} руб")
-    print(f"Вес брутто: {chocolate.weight} г")
-    print(f"Процент содержания какао: {chocolate.cocoa_percentage}")
-    print(f"Тип шоколада: {chocolate.chocolate_type}")
-
-    print("\nМармелад жевательный:")
-    print(f"Название конфет: {gummy.name}")
-    print(f"Стоимость: {gummy.price} руб")
-    print(f"Вес брутто: {gummy.weight} г")
-    print(f"Вкус: {gummy.flavor}")
-    print(f"Форма: {gummy.shape}")
-
-    print("\nФруктовые леденцы:")
-    print(f"Название конфет: {hard_candy.name}")
-    print(f"Стоимость: {hard_candy.price} руб")
-    print(f"Вес брутто: {hard_candy.weight} г")
-    print(f"Вкус: {hard_candy.flavor}")
-    print(f"Начинка: {hard_candy.filled}")
+    soldier1 = Soldier("Иван Сусанин", "рядовой", "12345")
+    soldier1.get_rank()
+    soldier1.promote()
+    soldier1.demote()
